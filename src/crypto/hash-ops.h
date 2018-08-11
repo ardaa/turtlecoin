@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
+// Copyright (c) 2018, The TurtleCoin Developers
 //
 // This file is part of Bytecoin.
 //
@@ -65,7 +66,7 @@ enum {
 
 void cn_fast_hash(const void *data, size_t length, char *hash);
 
-void cn_slow_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed);
+void cn_slow_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations);
 
 void hash_extra_blake(const void *data, size_t length, char *hash);
 void hash_extra_groestl(const void *data, size_t length, char *hash);
