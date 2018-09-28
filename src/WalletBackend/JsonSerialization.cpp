@@ -8,11 +8,12 @@
 
 #include <Common/StringTools.h>
 
-#include <WalletBackend/WalletBackend.h>
-#include <WalletBackend/WalletSynchronizer.h>
+#include <WalletBackend/Constants.h>
 #include <WalletBackend/SubWallet.h>
 #include <WalletBackend/SubWallets.h>
 #include <WalletBackend/SynchronizationStatus.h>
+#include <WalletBackend/WalletBackend.h>
+#include <WalletBackend/WalletSynchronizer.h>
 
 using nlohmann::json;
 
@@ -42,6 +43,8 @@ json SubWallet::toJson() const
         {"syncStartTimestamp", m_syncStartTimestamp},
         {"isViewWallet", m_isViewWallet},
         {"keyImages", m_keyImages},
+        {"balance", m_balance},
+        {"syncStartHeight", m_syncStartHeight},
     };
 }
 
@@ -53,6 +56,8 @@ void SubWallet::fromJson(const json &j)
     m_syncStartTimestamp = j.at("syncStartTimestamp").get<uint64_t>();
     m_isViewWallet = j.at("isViewWallet").get<bool>();
     m_keyImages = j.at("keyImages").get<std::unordered_set<Crypto::KeyImage>>();
+    m_balance = j.at("balance").get<uint64_t>();
+    m_syncStartHeight = j.at("syncStartHeight").get<uint64_t>();
 }
 
 ///////////////
@@ -104,7 +109,7 @@ json WalletBackend::toJson() const
 {
     return
     {
-        {"walletFileFormatVersion", WALLET_FILE_FORMAT_VERSION},
+        {"walletFileFormatVersion", Constants::WALLET_FILE_FORMAT_VERSION},
         {"privateViewKey", m_privateViewKey},
         {"subWallets", *m_subWallets},
         {"isViewWallet", m_isViewWallet},
@@ -116,7 +121,7 @@ void WalletBackend::fromJson(const json &j)
 {
     uint16_t version = j.at("walletFileFormatVersion").get<uint16_t>();
 
-    if (version != WALLET_FILE_FORMAT_VERSION)
+    if (version != Constants::WALLET_FILE_FORMAT_VERSION)
     {
         /* TODO: This should probably be a custom type, throwing an actual
            error we can catch upstream? */
@@ -250,6 +255,7 @@ json WalletSynchronizer::toJson() const
     {
         {"transactionSynchronizerStatus", m_transactionSynchronizerStatus},
         {"startTimestamp", m_startTimestamp},
+        {"startHeight", m_startHeight},
         {"privateViewKey", m_privateViewKey}
     };
 }
@@ -261,6 +267,8 @@ void WalletSynchronizer::fromJson(const json &j)
     m_transactionSynchronizerStatus = m_blockDownloaderStatus;
 
     m_startTimestamp = j.at("startTimestamp").get<uint64_t>();
+    m_startHeight = j.at("startHeight").get<uint64_t>();
+
     m_privateViewKey = j.at("privateViewKey").get<Crypto::SecretKey>();
 }
 
